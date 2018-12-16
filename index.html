@@ -6,12 +6,14 @@
         <div>試行回数: <input id="times" type="number" name="times" min="1" max="1000000" value="10000"></div>
         <div><input id="exec" type="submit" value="実行"></div>
         
-        <div style="margin-top: 5%;">
+        <div style="margin-top: 15px;">
+            勝率<br>
         <textarea id="text" style="width: 40%; height: 30%;">
         </textarea>
         </div>
 
 
+        <h3>ルール</h3>
         <pre>
 グー: チョキに勝つ
 チョキ: パーに勝つ
@@ -19,6 +21,7 @@
 キュー: グー・チョキ・パーであいこが発生している場合に限り、勝つ
         </pre>
         <br>
+        <h3>方法、メリット・デメリットなど</h3>
         <pre>
 ここでは、既存のじゃんけんにおける三者の関係性を維持したまま、新たな手「キュー」を追加することを考えた。
 キューは本質的にじゃんけんの外にいるものとして考え、メタじゃんけん的な要素として”あいこに勝つ”手と定義した。
