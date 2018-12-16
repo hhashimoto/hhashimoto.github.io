@@ -1,6 +1,100 @@
 <html lang="ja">
     <head></head>
     <body>
-        test
+        <div>人数: <input id="mans" type="number" name="mans" min="2" max="30" value="3"></div>
+        <div>キューあり: <input id="q" type="checkbox" name="q" checked></div>
+        <div>試行回数: <input id="times" type="number" name="times" min="1" max="1000000" value="10000"></div>
+        <div><input id="exec" type="submit" value="実行"></div>
+        
+        <div style="margin-top: 5%;">
+        <textarea id="text" style="width: 40%; height: 30%;">
+        </textarea>
+        </div>
+
+
+        <pre>
+グー: チョキに勝つ
+チョキ: パーに勝つ
+パー: グーに勝つ
+キュー: グー・チョキ・パーであいこが発生している場合に限り、勝つ
+        </pre>
+        <br>
+        <pre>
+ここでは、既存のじゃんけんにおける三者の関係性を維持したまま、新たな手「キュー」を追加することを考えた。
+キューは本質的にじゃんけんの外にいるものとして考え、メタじゃんけん的な要素として”あいこに勝つ”手と定義した。
+これにより、特に4人以上における、あいこの発生率を劇的に減少させることが可能となる。
+しかし、乱数シミュレーションの結果、多人数ではキューの圧倒的有利が示されることとなった。
+人間同士ではもう少しキューの勝率が下がってくる可能性もあるが、数値上は有意である。
+結論として、この方法では、あいこ率の低下に成功したものの、優位性という別な問題が発生した。
+ここからは、この偏りをなるべく減らす方法を考える必要がある。
+        </pre>
+        <script>
+window.onload = function() {
+    var exec = document.getElementById('exec');
+    exec.onclick = function() {
+        var mans = +document.getElementById('mans').value;
+        var q = document.getElementById('q').checked;
+        var times = +document.getElementById('times').value;
+
+        var r = b(times, mans, q?4:3);
+        var t = document.getElementById('text');
+        console.log(r);
+
+        var rd = r['DRAW'] / times * 100;
+        var rq = (r['Q'] | 0) / times * 100;
+        var ro = 100 - rd - rq;
+        t.textContent = "あいこ: " + rd + "%\n" + "キュー: " + rq + "%\n" + "その他: " + ro + "%";
+    }
+};
+
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+const DRAW = -1;
+const ROCK = 0;
+const PAPER = 1;
+const SCISSORS = 2;
+const Q = 3;
+function c(n) {
+    switch (n) {
+        case DRAW: return 'DRAW';
+        case ROCK: return 'ROCK';
+        case PAPER: return 'PAPER';
+        case SCISSORS: return 'SCISSORS';
+        default: return 'Q';
+    }
+}
+function b(times, mans, kinds) {
+    var ret = [...Array(times)].map(() => a(mans, kinds));
+    var r = [];
+    [...Array(kinds)].map((_, i) => r[c(i)] = 0);
+    for (var i in ret) {
+        _k = c(ret[i]);
+        r[_k] = (r[_k]|0) +1;
+    }
+    return r;
+}
+function a(mans, kinds) {
+    var ret = [];
+    [...Array(kinds)].map((_, i) => ret[i] = 0);
+    var arr = [...Array(mans)].map(() => getRandomInt(0, kinds));
+    for (var i in arr) {
+        ret[arr[i]]++;
+    }
+    var x = mans - ret[Q];
+    if ((ret[ROCK] === x || ret[PAPER] === x || ret[SCISSORS] === x) ||
+        (ret[ROCK] > 0 && ret[PAPER] > 0 && ret[SCISSORS] > 0)) {
+        return ret[Q] > 0 ? Q : DRAW;
+    }
+    if (x === 0) return DRAW;
+
+    if (ret[ROCK] === 0) return SCISSORS;
+    if (ret[PAPER] === 0) return ROCK;
+    return PAPER;
+}
+        </script>
     </body>
 </html>
